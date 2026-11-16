@@ -1,5 +1,12 @@
 # lively.lang [![Build Status](https://travis-ci.org/LivelyKernel/lively.lang.svg?branch=master)](https://travis-ci.org/LivelyKernel/lively.lang)
 
+> **This is a fork of version 0.7.9** (the upstream `legacy-fixes` branch) with one change:
+> `fun.argumentNames` no longer scans a function's text for an arrow when the text holds no
+> `=>`. Every answer is the same as in 0.7.9; the scan was the slow part of building many
+> classes. Nothing else differs. The change is one commit on the `keo-fixes` branch; the tag
+> `0.7.9-keo.1` is the version to depend on. Upstream: <https://github.com/LivelyKernel/lively.lang>
+> (development moved to <https://github.com/LivelyKernel/lively.next>).
+
 *What?* This project packages abstractions for JavaScript that proved to be useful in
 the [Lively Web](http://lively-web.org) project. On first glance it might seem
 to be just another underscore.js library but apart from extensions to existing
