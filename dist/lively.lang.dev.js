@@ -2564,7 +2564,7 @@
     argumentNames: function (f) {
       if (f.superclass)
         return [];
-      var src = f.toString(), names = "", arrowMatch = src.match(/(?:\(([^\)]*)\)|([^\(\)-+!]+))\s*=>/);
+      var src = f.toString(), names = "", arrowMatch = src.indexOf("=>") < 0 ? null : src.match(/(?:\(([^\)]*)\)|([^\(\)-+!]+))\s*=>/);
       if (arrowMatch)
         names = arrowMatch[1] || arrowMatch[2] || "";
       else {

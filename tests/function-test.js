@@ -51,6 +51,53 @@ describe('fun', function() {
       expect(fun.argumentNames(() => 23)).to.eql([]);
     });
 
+    it("answers as the plain logic does, with or without a => in the text", function() {
+      // argumentNames leaves the arrow pattern out for a text with no "=>" at all (it cannot match
+      // there and scanning for it is the slow part). That must never change an answer: compare with
+      // the plain logic (the arrow pattern always tried first) on every function of the library and
+      // on the shapes that matter. Texts that DO contain "=>" in a comment or a string keep the
+      // answer they had (the pattern is unanchored); this does not fix them and must not change them.
+      function plain(f) {
+        if (f.superclass) return [];
+        var src = f.toString(), names = "",
+            arrowMatch = src.match(/(?:\(([^\)]*)\)|([^\(\)-+!]+))\s*=>/);
+        if (arrowMatch) names = arrowMatch[1] || arrowMatch[2] || "";
+        else {
+          var headerMatch = src.match(/^[\s\(]*function[^(]*\(([^)]*)\)/);
+          if (headerMatch && headerMatch[1]) names = headerMatch[1];
+        }
+        return names.replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, '')
+                    .replace(/\s+/g, '').split(',')
+                    .map(function(ea) { return ea.trim(); })
+                    .filter(function(name) { return !!name; });
+      }
+      var corpus = [
+        function(a, b) { return a + b; },
+        function named(a, /*c*/ b) { return a + b; },
+        function() { return 1; },
+        function(a) { // a comment with an arrow => in it
+          return a; },
+        function(a) { return "a string with => in it"; },
+        function(a) { return [1].map(x => x + a); },
+        (a, b) => a + b,
+        a => a,
+        () => 1,
+        {m(a, b) { return a; }}.m,
+        {m(a, b) { return [a].map(x => x); }}.m
+      ];
+      // every function reachable two levels down in the library itself
+      Object.keys(lively.lang).forEach(function(k) {
+        var v = lively.lang[k];
+        if (typeof v === "function") corpus.push(v);
+        if (v && (typeof v === "object" || typeof v === "function"))
+          Object.keys(v).forEach(function(k2) { if (typeof v[k2] === "function") corpus.push(v[k2]); });
+      });
+      expect(corpus.length).to.be.greaterThan(100);
+      corpus.forEach(function(f) {
+        expect(fun.argumentNames(f)).to.eql(plain(f), "for " + String(f).slice(0, 60));
+      });
+    });
+
     it("can extract a function body a string", function() {
       var f = function(arg1, arg2, arg4) {
         var x = {
