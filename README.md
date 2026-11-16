@@ -3,8 +3,12 @@
 > **This is a fork of version 0.7.9** (the upstream `legacy-fixes` branch) with one change:
 > `fun.argumentNames` no longer scans a function's text for an arrow when the text holds no
 > `=>`. Every answer is the same as in 0.7.9; the scan was the slow part of building many
-> classes. Nothing else differs. The change is one commit on the `keo-fixes` branch; the tag
-> `0.7.9-keo.1` is the version to depend on. Upstream: <https://github.com/LivelyKernel/lively.lang>
+> classes. Nothing else differs in what the library does. The change is one commit on the
+> `keo-fixes` branch; the tags `0.7.9-keo.N` are the versions to depend on (the highest N is the
+> newest). One package.json detail differs: the script that rebuilds `dist/` is `build:dist`, not
+> `build`, because npm prepares a dependency installed from git that has a `build` script (a nested
+> install of all its dev dependencies), which made installing it slow (35 s and more instead of
+> 8 s) and, on one machine, fail now and then. Upstream: <https://github.com/LivelyKernel/lively.lang>
 > (development moved to <https://github.com/LivelyKernel/lively.next>).
 
 *What?* This project packages abstractions for JavaScript that proved to be useful in
